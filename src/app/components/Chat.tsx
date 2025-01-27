@@ -9,23 +9,63 @@ import {
 } from "@chatscope/chat-ui-kit-react";
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import "@/css/chat.css";
+import axios from "axios";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
+interface MessageType {
+  message: string;
+  sender: string;
+}
 
 export default function Chat() {
-  const [messages, setMessages] = useState([{ message: "", sender: "" }]);
+  const [messages, setMessages] = useState<MessageType[]>([
+    {
+      message: "Hello! How can I help you today?",
+      sender: "ai",
+    },
+  ]);
+  const [activeSendButton, setSendButton] = useState(true);
   const [messageInput, setMessageInput] = useState("");
 
-  const handleSendMessage = () => {
-    if (messageInput.trim() !== "") {
-      setMessages([...messages, { message: messageInput, sender: "user" }]);
+  async function handleSendMessage() {
+    console.log(messages);
+    if (messages[messages.length - 1]["sender"] === "ai") {
+      setSendButton(true);
+
+      const userMessage = messageInput;
+
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { message: userMessage, sender: "user" },
+      ]);
+
       setMessageInput("");
+      try {
+        const response = await axios.post("http://localhost:8000/message/", {
+          user_id: 2,
+          message: userMessage,
+        });
+
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { message: response.data.response, sender: "ai" },
+        ]);
+      } catch {
+        console.error("Error sending message:");
+      } finally {
+        setSendButton(false);
+      }
+    } else {
+      setMessageInput(messageInput);
     }
-  };
+  }
 
   return (
     <ChatContainer
       style={{
         paddingTop: "30px",
-        width: "40vw",
+        width: "50vw",
         height: "90vh",
         backgroundColor: "#292929",
       }}
@@ -41,8 +81,10 @@ export default function Chat() {
             style={{
               marginBottom: "10px",
               padding: "8px 12px",
+              fontSize: "18px",
             }}
             key={index}
+            type="html"
             model={{
               message: msg.message,
               sentTime: "just now",
@@ -50,11 +92,14 @@ export default function Chat() {
               direction: msg.sender === "user" ? "outgoing" : "incoming",
               position: "single",
             }}
-          />
+          >
+            <ReactMarkdown className="markdown" remarkPlugins={[remarkGfm]}>
+              {msg.message}
+            </ReactMarkdown>
+          </Message>
         ))}
       </MessageList>
       <MessageInput
-        placeholder="Type a message..."
         style={{
           padding: "5px 10px",
           borderRadius: "15px",
@@ -63,7 +108,9 @@ export default function Chat() {
           backgroundColor: "#3e3e3e",
         }}
         value={messageInput}
-        onChange={(e) => setMessageInput(e)}
+        autoFocus={true}
+        sendDisabled={activeSendButton}
+        onChange={(value) => setMessageInput(value)}
         onSend={handleSendMessage}
         attachButton={false}
       />
