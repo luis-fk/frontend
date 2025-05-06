@@ -1,7 +1,7 @@
 "use client";
-import MuiDrawer from "@/app/plants/components/MuiDrawer";
+import MuiDrawer from "@/app/political-culture/components/MuiDrawer";
 import { Box, useMediaQuery } from "@mui/material";
-import "@/plants/css/layout.css";
+import "@/political-culture/css/layout.css";
 
 export default function RootLayout({
   children,
