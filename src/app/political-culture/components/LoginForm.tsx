@@ -3,7 +3,7 @@ import { login } from "@/app/actions/login";
 import { useState, useEffect } from "react";
 import ErrorMessage from "./ErrorMessage";
 import { useRouter } from "next/navigation";
-import "@/plants/css/login.css";
+import "@/political-culture/css/login.css";
 
 export function LoginForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -21,7 +21,7 @@ export function LoginForm() {
       setErrorMessage(result.message);
     }
 
-    router.push("/plants/chat");
+    router.push("/political-culture/chat");
   }
 
   useEffect(() => {
