@@ -1,17 +1,20 @@
 "use client";
-import { login } from "@/plants/actions/login";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { logger } from "@/app/api/log/client-logger";
-import Toast from "@/app/components/Toast";
-import "@/plants/css/login.css";
 
-export function LoginForm() {
+import { useState } from "react";
+import { login } from "@/cfflch/actions/login";
+import { logger } from "@/app/api/log/client-logger";
+import { useRouter } from "next/navigation";
+import Toast from "@/app/components/Toast";
+import "@/cfflch/css/login.css";
+
+export default function LoginForm(): React.ReactElement {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    event: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> {
     event.preventDefault();
     setSubmitting(true);
 
@@ -26,7 +29,7 @@ export function LoginForm() {
     }
 
     setSubmitting(false);
-    router.push("/plants/chat");
+    router.push("/cfflch/search");
   }
 
   return (

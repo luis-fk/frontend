@@ -1,10 +1,18 @@
 "use client";
+
 import { Drawer, Box, MenuItem, IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-export default function MuiDrawer() {
+export default function MuiDrawer(): React.ReactElement {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
+
+  function navigate(path: string): void {
+    setOpen(false);
+    router.push(path);
+  }
 
   return (
     <>
@@ -46,15 +54,17 @@ export default function MuiDrawer() {
             <MenuIcon sx={{ fontSize: 35 }} />
           </IconButton>
 
-          <MenuItem sx={{ color: "white" }}>Chat</MenuItem>
           <MenuItem
-            sx={{
-              color: "rgba(255,255,255,0.4)",
-              cursor: "default",
-              pointerEvents: "none",
-            }}
+            sx={{ color: "white" }}
+            onClick={() => navigate("/cfflch/search")}
           >
-            Statistics
+            Search
+          </MenuItem>
+          <MenuItem
+            sx={{ color: "white" }}
+            onClick={() => navigate("/cfflch/results")}
+          >
+            Results
           </MenuItem>
         </Box>
       </Drawer>
